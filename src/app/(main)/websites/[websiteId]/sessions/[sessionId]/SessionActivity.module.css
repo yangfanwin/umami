@@ -5,10 +5,19 @@
 }
 
 .row {
-  display: grid;
-  grid-template-columns: max-content max-content 1fr;
+  display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+  padding: 10px;
+}
+
+.value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  flex-shrink: 0;
+  margin-left: 50px;
 }
 
 .time {

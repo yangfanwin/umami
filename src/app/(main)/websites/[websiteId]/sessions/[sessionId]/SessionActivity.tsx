@@ -1,5 +1,5 @@
 import { isSameDay } from 'date-fns';
-import { Loading, Icon, StatusLight } from 'react-basics';
+import { Loading, Icon, StatusLight, TooltipPopup } from 'react-basics';
 import Icons from '@/components/icons';
 import { useSessionActivity, useTimezone } from '@/components/hooks';
 import styles from './SessionActivity.module.css';
@@ -27,7 +27,7 @@ export function SessionActivity({
 
   return (
     <div className={styles.timeline}>
-      {data.map(({ eventId, createdAt, urlPath, eventName, visitId }) => {
+      {data.map(({ eventId, createdAt, urlPath, eventName, visitId, stringValue }) => {
         const showHeader = !lastDay || !isSameDay(new Date(lastDay), new Date(createdAt));
         lastDay = createdAt;
 
@@ -44,6 +44,9 @@ export function SessionActivity({
               </div>
               <Icon>{eventName ? <Icons.Bolt /> : <Icons.Eye />}</Icon>
               <div>{eventName || urlPath}</div>
+              <TooltipPopup label={stringValue || ''}>
+                <div className={styles.value}>{stringValue || ''}</div>
+              </TooltipPopup>
             </div>
           </Fragment>
         );
