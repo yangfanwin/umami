@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { isbot } from 'isbot';
-import { startOfHour, startOfMonth } from 'date-fns';
+// import { startOfHour, startOfMonth } from 'date-fns';
+import { startOfHour } from 'date-fns';
 import clickhouse from '@/lib/clickhouse';
 import { parseRequest } from '@/lib/request';
 import { badRequest, json, forbidden, serverError } from '@/lib/response';
@@ -17,6 +18,7 @@ const schema = z.object({
   type: z.enum(['event', 'identify']),
   payload: z.object({
     website: z.string().uuid(),
+    userId: z.string().max(36).optional(),
     data: anyObjectParam.optional(),
     hostname: z.string().max(100).optional(),
     language: z.string().max(35).optional(),
@@ -49,6 +51,7 @@ export async function POST(request: Request) {
 
     const {
       website: websiteId,
+      userId,
       hostname,
       screen,
       language,
@@ -83,7 +86,8 @@ export async function POST(request: Request) {
     }
 
     // Client info
-    const { ip, userAgent, device, browser, os, country, subdivision1, subdivision2, city } =
+    // const { ip, userAgent, device, browser, os, country, subdivision1, subdivision2, city } =
+    const { ip, device, browser, os, country, subdivision1, subdivision2, city } =
       await getClientInfo(request, payload);
 
     // IP block
@@ -94,10 +98,13 @@ export async function POST(request: Request) {
     const createdAt = timestamp ? new Date(timestamp * 1000) : new Date();
     const now = Math.floor(new Date().getTime() / 1000);
 
-    const sessionSalt = hash(startOfMonth(createdAt).toUTCString());
+    // const sessionSalt = hash(startOfMonth(createdAt).toUTCString());
     const visitSalt = hash(startOfHour(createdAt).toUTCString());
 
-    const sessionId = uuid(websiteId, ip, userAgent, sessionSalt);
+    // const sessionId = uuid(websiteId, ip, userAgent, sessionSalt);
+    const sessionId = userId;
+
+    console.info('api/send sessionId:', sessionId, cache);
 
     // Find session
     if (!clickhouse.enabled && !cache?.sessionId) {

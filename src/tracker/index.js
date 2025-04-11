@@ -21,6 +21,7 @@
   const website = attr(_data + 'website-id');
   const hostUrl = attr(_data + 'host-url');
   const tag = attr(_data + 'tag');
+  const userId = attr(_data + 'user-id');
   const autoTrack = attr(_data + 'auto-track') !== _false;
   const dnt = attr(_data + 'do-not-track') === _true;
   const excludeSearch = attr(_data + 'exclude-search') === _true;
@@ -46,6 +47,7 @@
     url: currentUrl,
     referrer: currentRef,
     tag: tag ? tag : undefined,
+    userId: userId ? userId : undefined,
   });
 
   const hasDoNotTrack = () => {
